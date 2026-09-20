@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View Wizard -->
+    <record id="view_packaging_cost_wizard_form" model="ir.ui.view">
+        <field name="name">packaging.cost.wizard.form</field>
+        <field name="model">packaging.cost.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Packaging Cost &amp; Price Calculator">
+                <field name="order_line_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                
+                <div class="alert alert-info" role="alert">
+                    Kalkulator HPP dan Harga Jual berdasarkan dimensi lembaran karton box dan parameter biaya produksi.
+                </div>
+
+                <group>
+                    <group string="1. Material &amp; Berat Kemasan">
+                        <field name="packaging_spec_id"/>
+                        <field name="paper_substance"/>
+                        <field name="flute_type"/>
+                        <field name="sheet_area_sqm"/>
+                        <field name="total_gsm"/>
+                        <field name="box_weight_kg" class="fw-bold text-primary"/>
+                    </group>
+                    <group string="2. Biaya Produksi (HPP)">
+                        <field name="paper_price_per_kg"/>
+                        <field name="paper_cost"/>
+                        <label for="printing_colors" string="Cetak Flexo"/>
+                        <div class="o_row">
+                            <field name="printing_colors" class="oe_inline"/> warna @ 
+                            <field name="printing_cost_per_color" class="oe_inline"/>
+                        </div>
+                        <field name="total_printing_cost"/>
+                        <field name="joint_cost"/>
+                        <field name="waste_percent"/>
+                        <field name="total_cogs" class="fw-bold text-danger fs-5"/>
+                    </group>
+                </group>
+
+                <div class="card p-3 bg-light mt-2">
+                    <group string="3. Penetapan Margin &amp; Harga Jual Penawaran">
+                        <group>
+                            <field name="margin_percent" class="fw-bold"/>
+                        </group>
+                        <group>
+                            <field name="suggested_price" class="fw-bold text-success fs-4"/>
+                        </group>
+                    </group>
+                </div>
+
+                <footer>
+                    <button name="action_apply_price"
+                            string="Apply Price to Quotation"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Window for Wizard -->
+    <record id="action_packaging_cost_wizard" model="ir.actions.act_window">
+        <field name="name">Calculate Packaging Price</field>
+        <field name="res_model">packaging.cost.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

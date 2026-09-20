@@ -1,0 +1,15 @@
+[options]
+; Path ke addons Odoo dan custom addons
+addons_path = odoo/addons,custom_addons
+
+; Database configuration
+db_host = localhost
+db_port = 5432
+db_user = ericko
+db_password = 
+db_name = belajar_odoo
+
+; Server configuration
+http_port = 8069
+list_db = True
+admin_passwd = admin

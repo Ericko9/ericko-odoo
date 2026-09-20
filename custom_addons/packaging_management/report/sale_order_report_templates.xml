@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit QWeb Quotation/Sale Order PDF Report -->
+    <template id="report_saleorder_document_inherit_packaging" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//td[@name='td_product_name']" position="inside">
+            <t t-if="line.packaging_spec_id">
+                <div class="text-muted small mt-1 ps-2 border-start border-2 border-info">
+                    <div>
+                        <strong>Packaging:</strong>
+                        <span t-field="line.packaging_spec_id.name"/>
+                        (<span t-field="line.packaging_spec_id.box_type"/> - <span t-field="line.packaging_spec_id.flute_type"/>)
+                    </div>
+                    <div>
+                        <strong>Dimensi:</strong>
+                        <span t-field="line.length"/> x <span t-field="line.width"/> x <span t-field="line.height"/> mm
+                    </div>
+                    <div>
+                        <strong>Sheet Area:</strong>
+                        <span t-field="line.sheet_area_sqm"/> m² / pcs
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

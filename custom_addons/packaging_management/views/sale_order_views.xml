@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Form View sale.order -->
+    <record id="view_order_form_inherit_packaging" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.packaging</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Sisipkan kolom-kolom kemasan ke dalam tabel baris pesanan (order_line) -->
+            <xpath expr="//field[@name='order_line']/list//field[@name='name']" position="after">
+                <field name="packaging_spec_id" optional="show"/>
+                <field name="length" optional="show"/>
+                <field name="width" optional="show"/>
+                <field name="height" optional="show"/>
+                <field name="sheet_area_sqm" optional="show"/>
+                <field name="delivery_tolerance_pct" optional="show" string="Tol (±%)"/>
+                <button name="action_open_cost_wizard"
+                        type="object"
+                        icon="fa-calculator"
+                        title="Calculate Packaging Cost &amp; Price"
+                        invisible="not packaging_spec_id"/>
+            </xpath>
+
+            <!-- Sisipkan grup form packaging jika form baris pesanan dibuka -->
+            <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="before">
+                <group string="Packaging Specification Details">
+                    <group>
+                        <field name="packaging_spec_id"/>
+                        <field name="length"/>
+                        <field name="width"/>
+                        <field name="height"/>
+                        <field name="delivery_tolerance_pct"/>
+                    </group>
+                    <group string="Corrugated Sheet Calculation">
+                        <field name="sheet_length" readonly="1"/>
+                        <field name="sheet_width" readonly="1"/>
+                        <field name="sheet_area_sqm" readonly="1"/>
+                        <button name="action_open_cost_wizard"
+                                type="object"
+                                string="Calculate Price Wizard"
+                                class="btn-primary"
+                                icon="fa-calculator"
+                                invisible="not packaging_spec_id"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

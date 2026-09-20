@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree / List View -->
+    <record id="view_packaging_specification_tree" model="ir.ui.view">
+        <field name="name">packaging.specification.list</field>
+        <field name="model">packaging.specification</field>
+        <field name="arch" type="xml">
+            <list string="Packaging Specifications">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="box_type"/>
+                <field name="flute_type"/>
+                <field name="length"/>
+                <field name="width"/>
+                <field name="height"/>
+                <field name="sheet_area_sqm"/>
+                <field name="order_count" optional="show"/>
+                <field name="total_qty_sold" optional="show"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'sample'"
+                       decoration-success="state == 'approved'"
+                       decoration-muted="state == 'obsolete'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_packaging_specification_form" model="ir.ui.view">
+        <field name="name">packaging.specification.form</field>
+        <field name="model">packaging.specification</field>
+        <field name="arch" type="xml">
+            <form string="Packaging Specification">
+                <!-- Statusbar Header & Action Buttons -->
+                <header>
+                    <button name="action_request_sample"
+                            string="Request Sample"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve"
+                            string="Approve Specification"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'sample'"/>
+                    <button name="action_set_obsolete"
+                            string="Set Obsolete"
+                            type="object"
+                            invisible="state != 'approved'"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'obsolete'"/>
+                    <button name="action_open_portal"
+                            string="Customer Portal Approval Link"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-globe"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sample,approved"/>
+                </header>
+                <sheet>
+                    <!-- Smart Stat Buttons Box -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sales_orders"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-usd">
+                            <field name="order_count" widget="statinfo" string="Orders"/>
+                        </button>
+                        <button name="action_view_sales_orders"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-cubes">
+                            <field name="total_qty_sold" widget="statinfo" string="Qty Sold (pcs)"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="Specification Code"/>
+                        <h1>
+                            <field name="name" placeholder="Contoh: BOX-AQU-001"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Customer &amp; Box Type">
+                            <field name="partner_id"/>
+                            <field name="box_type"/>
+                            <field name="flute_type"/>
+                            <field name="paper_substance"/>
+                            <field name="joint_type"/>
+                            <field name="printing_colors"/>
+                            <field name="delivery_tolerance_pct"/>
+                        </group>
+                        <group string="Dimensions (mm)">
+                            <field name="length"/>
+                            <field name="width"/>
+                            <field name="height"/>
+                            <field name="sheet_length" readonly="1"/>
+                            <field name="sheet_width" readonly="1"/>
+                            <field name="sheet_area_sqm" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Artwork &amp; Customer Approval" name="artwork">
+                            <group>
+                                <group string="Desain Mockup 3D / Artwork">
+                                    <field name="artwork_image" widget="image" options="{'size': [260, 260]}"/>
+                                    <field name="artwork_filename" invisible="1"/>
+                                    <field name="artwork_file" filename="artwork_filename"/>
+                                </group>
+                                <group string="Portal &amp; Digital Signature">
+                                    <field name="portal_url" widget="CopyClipboardChar" readonly="1"/>
+                                    <field name="signed_by" readonly="1"/>
+                                    <field name="signed_on" readonly="1"/>
+                                    <field name="approval_signature" widget="image" readonly="1" invisible="not approval_signature"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Technical Notes" name="notes">
+                            <field name="notes" placeholder="Catatan teknis khusus untuk proses produksi atau instruksi cetak..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_packaging_specification_search" model="ir.ui.view">
+        <field name="name">packaging.specification.search</field>
+        <field name="model">packaging.specification</field>
+        <field name="arch" type="xml">
+            <search string="Search Specifications">
+                <field name="name" string="Specification Code"/>
+                <field name="partner_id" string="Customer"/>
+                <filter string="Approved" name="state_approved" domain="[('state', '=', 'approved')]"/>
+                <filter string="In Sample" name="state_sample" domain="[('state', '=', 'sample')]"/>
+                <separator/>
+                <filter string="RSC Type" name="type_rsc" domain="[('box_type', '=', 'rsc')]"/>
+                <filter string="Die-Cut" name="type_diecut" domain="[('box_type', '=', 'diecut')]"/>
+                <group>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Box Type" name="group_by_box_type" context="{'group_by': 'box_type'}"/>
+                    <filter string="Flute Type" name="group_by_flute" context="{'group_by': 'flute_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="action_packaging_specification" model="ir.actions.act_window">
+        <field name="name">Packaging Specifications</field>
+        <field name="res_model">packaging.specification</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_packaging_specification_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada data spesifikasi kemasan.
+            </p>
+            <p>
+                Klik tombol New untuk membuat spesifikasi kemasan karton box pelanggan baru.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="menu_packaging_root"
+        name="Packaging"
+        parent="sale.sale_menu_root"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_packaging_spec"
+        name="Specifications"
+        parent="menu_packaging_root"
+        action="action_packaging_specification"
+        sequence="10"/>
+</odoo>
